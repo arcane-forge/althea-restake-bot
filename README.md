@@ -5,7 +5,7 @@ This Python script automates the process of collecting and restaking rewards on 
 ## Requirements
 
 - Python 3.6 or later
-- Althea CLI (`althea` command)
+- Althea CLI (`althead` command)
 - Node URL and Chain ID for the Althea network
 - Validator and delegator wallet addresses set up in Althea
 
