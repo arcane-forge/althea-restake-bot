@@ -1,11 +1,11 @@
 # Althea Restake Bot
 
-This Python script automates the process of collecting and restaking rewards on the Althea blockchain network. It queries for available staking rewards, collects them, and restakes 50% of the rewards every 4 hours. The script supports using a keyring backend (e.g., `file` or `test`) to avoid manual password entry.
+This Python script automates the process of collecting and restaking rewards on the Althea blockchain network. It queries for available staking rewards, collects them, and restakes 50% of the rewards at a configured interval (default 4 hours). The script supports using a keyring backend (e.g., `file` or `test`) to avoid manual password entry.
 
 ## Requirements
 
 - Python 3.6 or later
-- Althea CLI (`althead` command)
+- Althea CLI (`althea` command)
 - Node URL and Chain ID for the Althea network
 - Validator and delegator wallet addresses set up in Althea
 
@@ -18,69 +18,36 @@ git clone https://github.com/arcane-forge/althea-restake-bot.git
 cd althea-restake-bot
 ```
 
-### 2. Install Dependencies
+### 2. Install the Bot
 
-Ensure you have Python 3.6+ and install the necessary Python packages.
-
-```bash
-pip install subprocess
-```
-
-### 3. Configure the Script
-
-Open the script `restake_bot.py` and update the following placeholders:
-
-- **`<VALIDATOR_ADDRESS>`**: Replace with the address of your validator.
-- **`<DELEGATOR_WALLET>`**: Replace with the name of your delegator wallet (the wallet that will collect rewards and restake).
-
-Example:
-
-```python
-validator_address = "altheavaloper1xyz..."
-delegator_wallet = "my-delegator-wallet"
-```
-
-### 4. Keyring Backend (Optional)
-
-If your keyring is locked, you can set the keyring backend to avoid manual password entry. To set it, modify the script to include the `--keyring-backend` option in the staking delegate command, or set the environment variable.
-
-For example:
-
-```python
-delegate_command = f"althea tx staking delegate {validator_address} {amount} --from {delegator_wallet} --node {node_url} --chain-id {chain_id} --fees {fees} --gas {gas} --keyring-backend file -y"
-```
-
-Alternatively, you can set the keyring backend globally by adding this to your `.bashrc` or `.zshrc`:
+To install the bot and configure the cron job for automatic execution, use the provided installation script:
 
 ```bash
-export ALTHEA_KEYRING_BACKEND="file"
+chmod +x install.sh
+./install.sh
 ```
 
-### 5. Run the Script
+The installation script will prompt you for the following:
 
-Once the script is configured, you can run it manually to test it:
+- **Validator address**: Enter the address of your Althea validator.
+- **Delegator wallet name**: Enter the name of your delegator wallet (the wallet that will collect rewards and restake).
+- **Delegator address**: Enter the address of your delegator account.
+- **Keyring backend**: Choose the keyring backend (os, file, or test) to avoid manual password entry for transactions.
+- **Cron job interval**: Select the interval for running the bot automatically (30 minutes, 1 hour, 2 hours, 4 hours, 12 hours, or 24 hours).
+
+Once the script is executed, it will automatically set up the bot in a directory of your choice (default is `~/althea-restake-bot`), configure the cron job for automated execution, and store the configuration in a `config.txt` file.
+
+### 3. Run the Script Manually (Optional)
+
+If you wish to run the bot manually at any time, use the following command:
 
 ```bash
-python3 restake_bot.py
+python3 ~/althea-restake-bot/restake_bot.py
 ```
 
-### 6. Automate with Cron
+### 4. Automate with Cron
 
-To run the script every 4 hours, you can set up a cron job.
-
-1. Edit the cron job list:
-
-   ```bash
-   crontab -e
-   ```
-
-2. Add the following line to run the script every 4 hours:
-
-   ```bash
-   0 */4 * * * /usr/bin/python3 /path/to/restake_bot.py >> /path/to/logfile.log 2>&1
-   ```
-
-   Replace `/path/to/restake_bot.py` with the actual path to your script, and `/path/to/logfile.log` with the desired log file location.
+The installation script will automatically set up a cron job based on your preferred interval. This ensures that the bot runs periodically to collect and restake rewards.
 
 ## License
 
