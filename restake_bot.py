@@ -1,25 +1,30 @@
 import subprocess
 import time
 
-# ---- USER CONFIGURATION SECTION ----
-# Replace these values with your own details:
+# Function to read the configuration from config.txt
+def read_config():
+    config = {}
+    try:
+        with open('config.txt', 'r') as file:
+            for line in file:
+                if line.strip() and not line.startswith("#"):
+                    key, value = line.strip().split("=")
+                    config[key.strip()] = value.strip()
+    except Exception as e:
+        print(f"Error reading config.txt: {e}")
+    return config
 
-# Validator's address (the address of your validator)
-validator_address = "<VALIDATOR_ADDRESS>"  # <-- CHANGE THIS
+# Load configuration from config.txt
+config = read_config()
 
-# Delegator wallet name (the name of the wallet used to interact with the chain)
-delegator_wallet = "<DELEGATORS_WALLET_NAME>"  # <-- CHANGE THIS
-
-# Delegator's address (the address of your delegator wallet)
-delegator_address = "<DELEGATORS_WALLET_ADDRESS>"  # <-- CHANGE THIS
-
-# ---- END USER CONFIGURATION ----
-
-# Your node and chain details (do not change unless you have a custom node or chain)
-node_url = "https://althea-rpc.polkachu.com:443"
-chain_id = "althea_258432-1"
-fees = "35000000000000000aalthea"  # The fee used for each transaction
-gas = "350000"  # The gas used for each transaction
+# Your wallet information and node details from the config file
+validator_address = config.get("VALIDATOR_ADDRESS", "your_default_validator_address")
+delegator_wallet = config.get("DELEGATOR_WALLET", "your_default_wallet_name")
+delegator_address = config.get("DELEGATOR_ADDRESS", "your_default_delegator_address")
+node_url = config.get("NODE_URL", "https://althea-rpc.polkachu.com:443")
+chain_id = config.get("CHAIN_ID", "althea_258432-1")
+fees = config.get("FEES", "35000000000000000aalthea")
+gas = config.get("GAS", "350000")
 
 # Function to execute a command and capture its output
 def run_command(command):
