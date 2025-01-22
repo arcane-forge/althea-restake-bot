@@ -1,13 +1,25 @@
 import subprocess
 import time
 
-# Your wallet information and node details
-validator_address = "<VALIDATOR_ADDRESS>"  # Replace with your validator address
-delegator_wallet = "<DELEGATOR_WALLET>"  # Replace with your delegator wallet name
+# ---- USER CONFIGURATION SECTION ----
+# Replace these values with your own details:
+
+# Validator's address (the address of your validator)
+validator_address = "<VALIDATOR_ADDRESS>"  # <-- CHANGE THIS
+
+# Delegator wallet name (the name of the wallet used to interact with the chain)
+delegator_wallet = "<DELEGATORS_WALLET_NAME>"  # <-- CHANGE THIS
+
+# Delegator's address (the address of your delegator wallet)
+delegator_address = "<DELEGATORS_WALLET_ADDRESS>"  # <-- CHANGE THIS
+
+# ---- END USER CONFIGURATION ----
+
+# Your node and chain details (do not change unless you have a custom node or chain)
 node_url = "https://althea-rpc.polkachu.com:443"
 chain_id = "althea_258432-1"
-fees = "35000000000000000aalthea"
-gas = "350000"
+fees = "35000000000000000aalthea"  # The fee used for each transaction
+gas = "350000"  # The gas used for each transaction
 
 # Function to execute a command and capture its output
 def run_command(command):
@@ -16,7 +28,7 @@ def run_command(command):
 
 # Function to query for available rewards
 def query_rewards():
-    query_command = f"althea query distribution rewards {delegator_wallet} {validator_address} --from {delegator_wallet} --node {node_url} --chain-id {chain_id}"
+    query_command = f"althea query distribution rewards {delegator_address} {validator_address} --from {delegator_wallet} --node {node_url} --chain-id {chain_id}"
     print("Querying for rewards...")
     output = run_command(query_command)
     print(f"Raw Query result: {output}")  # Print the full query result for debugging
@@ -32,10 +44,21 @@ def collect_rewards():
 
 # Function to restake tokens
 def restake_tokens(amount):
-    delegate_command = f"althea tx staking delegate {validator_address} {amount} --from {delegator_wallet} --node {node_url} --chain-id {chain_id} --fees {fees} --gas {gas} --keyring-backend file -y"  # Change keyring-backend if needed
+    delegate_command = f"althea tx staking delegate {validator_address} {amount} --from {delegator_wallet} --node {node_url} --chain-id {chain_id} --fees {fees} --gas {gas} --log_level debug -y"
     print(f"Restaking {amount} tokens...")
     output = run_command(delegate_command)
-    print(f"Tokens restaked: {output}")
+    print(f"Raw Tokens restaked output: {output}")
+
+    # Check if the output includes txhash
+    if "txhash" in output:
+        txhash = output.split("txhash:")[1].strip().split()[0]
+        print(f"Transaction hash: {txhash}")
+
+        # Query the transaction to see if it was successful
+        tx_status = run_command(f"althea query tx {txhash} --node {node_url}")
+        print(f"Transaction status: {tx_status}")
+    else:
+        print("No txhash found in the output. There might have been an issue with the restake transaction.")
 
 # Function to check the status of the transaction
 def check_transaction_status(txhash):
