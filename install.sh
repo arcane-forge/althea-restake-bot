@@ -1,9 +1,7 @@
 #!/bin/bash
 
 # Prompt user for the directory to install the bot
-echo "Where would you like to save the Althea Restake Bot?"
-echo "Press enter to use the default location: ~/althea-restake-bot"
-read -p "Enter installation directory: " bot_dir
+read -p "Enter installation directory (default: $HOME/althea-restake-bot): " bot_dir
 bot_dir=${bot_dir:-$HOME/althea-restake-bot}
 
 # Create the directory if it doesn't exist
